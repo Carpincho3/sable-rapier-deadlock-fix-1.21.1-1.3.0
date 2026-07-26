@@ -1,0 +1,54 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "MIT"
+
+[[mods]]
+    modId = "sable_rapier_deadlock_fix"
+    version = "1.3.0"
+    displayName = "Sable 2.0.3 Stability Fixes"
+    authors = "AleKsanDerXs"
+    description = '''
+        Fixes five dedicated-server crashes in Sable 2.0.3's physics
+        and sublevel ("plot") systems:
+        1) RapierPhysicsPipeline.physicsTick() reentering the native Rapier
+           engine via handleBlockChange() -> Rapier3D.newVoxelCollider() while
+           already inside Rapier3D.step(), which hangs forever and eventually
+           trips ServerHangWatchdog.
+        2) RuntimeException "Body has been removed" when the periodic world
+           autosave reads a sublevel's velocity after its physics body was
+           already removed.
+        3) UnsupportedOperationException "Cannot change blocks in nonexistent
+           plot holder" when a block entity ticks inside a plot whose chunk
+           holder has already been torn down.
+        4) NullPointerException in AbstractContraptionEntity.sable$buildProperties
+           when MassTracker.getCenterOfMass() legitimately returns null for a
+           contraption with no solid blocks (e.g. an all-decorative/floating
+           contraption).
+        5) ServerHangWatchdog freeze in RapierVoxelColliderBakery -> Util$8.apply
+           when a modded block collision shape recursively requests collider
+           data for a BlockState whose collider is already being baked.
+    '''
+
+[[mixins]]
+    config = "sable_rapier_deadlock_fix.mixins.json"
+
+[[dependencies.sable_rapier_deadlock_fix]]
+    modId = "neoforge"
+    type = "required"
+    versionRange = "[21.1,)"
+    ordering = "NONE"
+    side = "BOTH"
+
+[[dependencies.sable_rapier_deadlock_fix]]
+    modId = "sable"
+    type = "required"
+    versionRange = "[2.0.3,2.0.4)"
+    ordering = "AFTER"
+    side = "BOTH"
+
+[[dependencies.sable_rapier_deadlock_fix]]
+    modId = "create"
+    type = "required"
+    versionRange = "[6.0.10,)"
+    ordering = "AFTER"
+    side = "BOTH"
